@@ -1,7 +1,9 @@
 "use client";
 
 import { useEditorStore } from "@/app/store/editorStore";
+import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
+import Highlight from "@tiptap/extension-highlight";
 import Strike from "@tiptap/extension-strike";
 import TextStyle from "@tiptap/extension-text-style";
 import Underline from "@tiptap/extension-underline";
@@ -38,7 +40,17 @@ export default function DocumentEditor({ temp }: { temp: string | null }) {
           "focus:outline-none print:boreder-0 bg-white shadow rounded border border-[#c7c7c7] flex flex-col min-h-[1054px] w-[816px] pt-10 pb-10 pr-14 cursor-text",
       },
     },
-    extensions: [StarterKit, Strike, Underline, FontFamily, TextStyle],
+    extensions: [
+      StarterKit,
+      Strike,
+      Underline,
+      FontFamily,
+      TextStyle,
+      Color,
+      Highlight.configure({
+        multicolor: true,
+      }),
+    ],
     content: temp,
   });
   return (

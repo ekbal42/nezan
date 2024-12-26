@@ -3,9 +3,8 @@
 import { useParams, useSearchParams } from "next/navigation";
 import DocumentEditor from "./editor";
 import Toolbar from "./Toolbar";
-import { useRouter } from "next/router";
 export default function Document() {
-  const { documentId } = useParams();
+  // const { documentId } = useParams();
   const searchParams = useSearchParams();
   const temp = searchParams.get("html");
 

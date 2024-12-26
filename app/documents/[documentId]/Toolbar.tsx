@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/app/store/editorStore";
 import {
+  Baseline,
   BoldIcon,
   ItalicIcon,
   Printer,
@@ -8,6 +9,8 @@ import {
   UnderlineIcon,
   Undo2Icon,
 } from "lucide-react";
+import { useState } from "react";
+import { CirclePicker, type ColorResult } from "react-color";
 
 export default function Toolbar() {
   const { editor } = useEditorStore();
@@ -78,8 +81,8 @@ export default function Toolbar() {
   ];
   return (
     <>
-      <div className="flex p-2 bg-white shadow-sm gap-1 border-b">
-        <div>
+      <div className="flex p-2 bg-gray-50 shadow-sm gap-2 border-b">
+        <div className="flex gap-2">
           {sections[0].map((section, i) => (
             <ToolbarButton key={i} {...section} />
           ))}
@@ -88,9 +91,15 @@ export default function Toolbar() {
           <FontFamilyButton />
         </div>
         <div>
+          <HeadingLevelButton />
+        </div>
+        <div className="flex gap-2">
           {sections[1].map((section, i) => (
             <ToolbarButton key={i} {...section} />
           ))}
+        </div>
+        <div>
+          <TextColorButton />
         </div>
       </div>
     </>
@@ -109,12 +118,39 @@ const ToolbarButton = ({
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded-md hover:bg-gray-100 ${
-        isActive ? "bg-gray-100" : ""
+      className={`p-2 rounded-md text-gray-800 hover:bg-gray-200 border border-gray-300 ${
+        isActive ? "bg-gray-200 border-gray-300" : ""
       }`}
     >
       {icon}
     </button>
+  );
+};
+
+const TextColorButton = () => {
+  const { editor } = useEditorStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const value = editor?.getAttributes("textStyle")?.color || "#000000";
+
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setColor(color.hex).run();
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="p-2 border border-gray-300 rounded hover:bg-gray-300"
+      >
+        <Baseline />
+      </button>
+      {isOpen && (
+        <div className="absolute mt-2 bg-white border border-gray-300 rounded shadow-lg p-2 z-10">
+          <CirclePicker color={value} onChange={onChange} />
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -130,17 +166,66 @@ const FontFamilyButton = () => {
 
   return (
     <select
-      className="border h-full px-3 appearance-none rounded-md"
+      className="h-full px-3 outline-none border rounded-md appearance-none font-mono"
       onChange={(e) =>
         editor?.chain().focus().setFontFamily(e.target.value).run()
       }
     >
-      <option value={editor?.getAttributes("textStyle").fontFamily || "Arial"}>
-        {editor?.getAttributes("textStyle").fontFamily || "Arial"}
-      </option>
       {fonts.map((font, i) => (
         <option key={i} value={font.value} style={{ fontFamily: font.value }}>
-          <span className="truncate">{font.label}</span>
+          {font.label}
+        </option>
+      ))}
+    </select>
+  );
+};
+const HeadingLevelButton = () => {
+  const { editor } = useEditorStore();
+  const headings = [
+    { label: "Normal Text", value: 0, fontSize: "16px" },
+    { label: "Heading H1", value: 1, fontSize: "32px" },
+    { label: "Heading H2", value: 2, fontSize: "24px" },
+    { label: "Heading H3", value: 3, fontSize: "20px" },
+    { label: "Heading H4", value: 4, fontSize: "16px" },
+    { label: "Heading H5", value: 5, fontSize: "14px" },
+    { label: "Heading H6", value: 6, fontSize: "12px" },
+  ];
+
+  const getCurrentHeading = () => {
+    for (let i = 1; i <= 6; i++) {
+      if (editor?.isActive(`heading${i}`)) {
+        return `Heading ${i}`;
+      }
+    }
+    return "Normal Text";
+  };
+
+  return (
+    <select
+      className="h-full px-3 outline-none border rounded-md appearance-none font-mono"
+      onChange={(e) => {
+        if (Number(e.target.value) === 0) {
+          editor?.chain().focus().setParagraph().run();
+        } else {
+          editor
+            ?.chain()
+            .focus()
+            .toggleHeading({ level: Number(e.target.value) })
+            .run();
+        }
+      }}
+    >
+      {headings.map((heading, i) => (
+        <option
+          key={i}
+          value={heading.value}
+          style={{ fontSize: heading.fontSize }}
+          defaultValue={
+            (heading.value === 0 && !editor?.isActive("heading1")) ||
+            editor?.isActive(`heading`, { level: heading.value })
+          }
+        >
+          {heading.label}
         </option>
       ))}
     </select>

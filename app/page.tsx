@@ -6,7 +6,7 @@ export default function Home() {
       <div className="grid grid-cols-4 gap-8">
         {/* Left column */}
         <div className="col-span-1 bg-lime-100 p-4 rounded border border-lime-500">
-          <h1 className="text-3xl font-bold">WordPlay</h1>
+          <h1 className="text-3xl font-bold">NEZAN</h1>
           <p className="text-gray-600 mt-4">
             Create beautiful documents for free using our templates. Click on a
             template to get started.
