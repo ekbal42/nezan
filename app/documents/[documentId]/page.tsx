@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import DocumentEditor from "./editor";
 import Toolbar from "./Toolbar";
 export default function Document() {

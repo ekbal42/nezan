@@ -62,41 +62,31 @@ body {
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 .tiptap {
-  /* List styles */
-  ui,
-  ol {
-    padding: 0 1rem;
-    margin: 1.25rem 1rem 1.25rem 0.4rem;
-  }
-
+  /* list style--------------------------------------------------= */
   ul,
-  li {
-    list-style-type: disc;
-    p {
-      margin-top: 0.25em;
-      margin-bottom: 0.25em;
-    }
+  ol {
+    padding-left: 1rem;
+    margin: 1.25rem 0;
   }
 
-  ol,
-  li {
-    list-style-type: decimal;
-    p {
-      margin-top: 0.25em;
-      margin-bottom: 0.25em;
-    }
+  ul {
+    list-style-type: disc;
   }
-  /* Heading styles */
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  li {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+
+  li > p {
+    margin: 0.25em 0;
+  }
+  /* Heading styles-------------------------------------------------------- */
   h1,
   h2,
   h3,
@@ -123,13 +113,13 @@ body {
   h6 {
     font-size: 1rem;
   }
-  /* blockquote */
+  /* blockquote ---------------------------------------------------------*/
   blockquote {
     border-left: 3px solid red;
     padding-left: 1rem;
   }
 
-  /* code */
+  /* code -------------------------------------------------------------*/
   pre {
     background: black;
     border-radius: 0.5rem;

@@ -33,24 +33,6 @@ export default function Toolbar() {
         onClick: () => editor?.chain().redo().run(),
         isActive: false,
       },
-      {
-        label: "Print",
-        icon: <Printer />,
-        onClick: () => window.print(),
-        isActive: editor?.isActive("print") ?? false,
-      },
-      {
-        label: "Spell Check",
-        icon: <SpellCheck />,
-        onClick: () => {
-          const current = editor?.view.dom.getAttribute("spellcheck");
-          editor?.view.dom.setAttribute(
-            "spellcheck",
-            current === "false" ? "true" : "false"
-          );
-        },
-        isActive: editor?.view.dom.getAttribute("spellcheck") === "true",
-      },
     ],
     [
       {
@@ -78,10 +60,30 @@ export default function Toolbar() {
         isActive: editor?.isActive("strike") ?? false,
       },
     ],
+    [
+      {
+        label: "Print",
+        icon: <Printer />,
+        onClick: () => window.print(),
+        isActive: editor?.isActive("print") ?? false,
+      },
+      {
+        label: "Spell Check",
+        icon: <SpellCheck />,
+        onClick: () => {
+          const current = editor?.view.dom.getAttribute("spellcheck");
+          editor?.view.dom.setAttribute(
+            "spellcheck",
+            current === "false" ? "true" : "false"
+          );
+        },
+        isActive: editor?.view.dom.getAttribute("spellcheck") === "true",
+      },
+    ],
   ];
   return (
     <>
-      <div className="flex p-2 bg-gray-50 shadow-sm gap-2 border-b">
+      <div className="flex items-center p-2 bg-gray-50 shadow-sm gap-2 border-b">
         <div className="flex gap-2">
           {sections[0].map((section, i) => (
             <ToolbarButton key={i} {...section} />
@@ -93,6 +95,12 @@ export default function Toolbar() {
         <div>
           <HeadingLevelButton />
         </div>
+        <div className="flex gap-2">
+          {sections[2].map((section, i) => (
+            <ToolbarButton key={i} {...section} />
+          ))}
+        </div>
+        <div className="w-px h-6 bg-gray-300" />
         <div className="flex gap-2">
           {sections[1].map((section, i) => (
             <ToolbarButton key={i} {...section} />
@@ -118,8 +126,8 @@ const ToolbarButton = ({
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded-md text-gray-800 hover:bg-gray-200 border border-gray-300 ${
-        isActive ? "bg-gray-200 border-gray-300" : ""
+      className={`p-2 rounded transition-colors ${
+        isActive ? "bg-gray-200" : "hover:bg-gray-200"
       }`}
     >
       {icon}
@@ -141,7 +149,7 @@ const TextColorButton = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="p-2 border border-gray-300 rounded hover:bg-gray-300"
+        className="p-2 rounded hover:bg-gray-200"
       >
         <Baseline />
       </button>
@@ -166,7 +174,7 @@ const FontFamilyButton = () => {
 
   return (
     <select
-      className="h-full px-3 outline-none border rounded-md appearance-none font-mono"
+      className="h-10 px-3 outline-none border rounded-md appearance-none font-mono"
       onChange={(e) =>
         editor?.chain().focus().setFontFamily(e.target.value).run()
       }
@@ -182,7 +190,7 @@ const FontFamilyButton = () => {
 const HeadingLevelButton = () => {
   const { editor } = useEditorStore();
   const headings = [
-    { label: "Normal Text", value: 0, fontSize: "16px" },
+    { label: "Normal", value: 0, fontSize: "16px" },
     { label: "Heading H1", value: 1, fontSize: "32px" },
     { label: "Heading H2", value: 2, fontSize: "24px" },
     { label: "Heading H3", value: 3, fontSize: "20px" },
@@ -191,18 +199,9 @@ const HeadingLevelButton = () => {
     { label: "Heading H6", value: 6, fontSize: "12px" },
   ];
 
-  const getCurrentHeading = () => {
-    for (let i = 1; i <= 6; i++) {
-      if (editor?.isActive(`heading${i}`)) {
-        return `Heading ${i}`;
-      }
-    }
-    return "Normal Text";
-  };
-
   return (
     <select
-      className="h-full px-3 outline-none border rounded-md appearance-none font-mono"
+      className="h-10 px-3 outline-none border rounded-md appearance-none font-mono"
       onChange={(e) => {
         if (Number(e.target.value) === 0) {
           editor?.chain().focus().setParagraph().run();
