@@ -2,6 +2,7 @@ import { useEditorStore } from "@/app/store/editorStore";
 import {
   Baseline,
   BoldIcon,
+  Highlighter,
   ItalicIcon,
   Printer,
   SpellCheck,
@@ -106,8 +107,10 @@ export default function Toolbar() {
             <ToolbarButton key={i} {...section} />
           ))}
         </div>
-        <div>
+        <div className="w-px h-6 bg-gray-300" />
+        <div className="flex gap-2">
           <TextColorButton />
+          <HighlightColorButton />
         </div>
       </div>
     </>
@@ -152,6 +155,32 @@ const TextColorButton = () => {
         className="p-2 rounded hover:bg-gray-200"
       >
         <Baseline />
+      </button>
+      {isOpen && (
+        <div className="absolute mt-2 bg-white border border-gray-300 rounded shadow-lg p-2 z-10">
+          <CirclePicker color={value} onChange={onChange} />
+        </div>
+      )}
+    </div>
+  );
+};
+const HighlightColorButton = () => {
+  const { editor } = useEditorStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const value = editor?.getAttributes("highlight")?.color || "#000000";
+
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setHighlight({ color: color.hex }).run();
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="p-2 rounded hover:bg-gray-200"
+      >
+        <Highlighter />
       </button>
       {isOpen && (
         <div className="absolute mt-2 bg-white border border-gray-300 rounded shadow-lg p-2 z-10">
